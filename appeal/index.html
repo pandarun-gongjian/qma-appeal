@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>申诉入口 · QMA 违规处理系统</title>
+<style>
+  :root{
+    --blue:#0056b3;
+    --blue-dark:#004494;
+    --ink:#1a1a1a;
+    --ink-2:#5a6570;
+    --line:#e2e7ec;
+    --bg:#f4f6f8;
+    --warn-bg:#fff8e6;
+    --warn-line:#f0d9a0;
+    --warn-ink:#8a6100;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:560px;margin:0 auto;padding:0 20px 48px}
+
+  header{
+    background:#fff;
+    border-bottom:1px solid var(--line);
+    padding:22px 20px 18px;
+    margin-bottom:22px;
+  }
+  .brand{
+    max-width:560px;margin:0 auto;
+  }
+  .brand-cn{
+    font-size:19px;font-weight:700;letter-spacing:.5px;
+  }
+  .brand-sub{
+    font-size:13px;color:var(--ink-2);margin-top:4px;
+  }
+
+  .batch-bar{
+    background:#fff;border:1px solid var(--line);border-radius:6px;
+    padding:14px 16px;margin-bottom:18px;
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .batch-label{font-size:13px;color:var(--ink-2);flex:none}
+  .batch-no{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:15px;font-weight:600;word-break:break-all;text-align:right;
+  }
+  .batch-no.empty{color:#a5afb8;font-weight:400;font-family:inherit}
+
+  .card{
+    background:#fff;border:1px solid var(--line);border-radius:6px;
+    padding:32px 22px;text-align:center;
+  }
+
+  .dot{
+    width:52px;height:52px;border-radius:50%;margin:0 auto 18px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:26px;line-height:1;
+  }
+  .dot.checking{background:#eef2f6;color:#8b98a5;animation:pulse 1.4s ease-in-out infinite}
+  .dot.online{background:#e7f4ec;color:#1f8a4c}
+  .dot.offline{background:var(--warn-bg);color:var(--warn-ink)}
+  @keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
+
+  h1{
+    font-size:20px;font-weight:700;margin:0 0 10px;letter-spacing:.3px;
+  }
+  .desc{
+    font-size:14px;color:var(--ink-2);margin:0 0 24px;
+  }
+
+  .btn{
+    display:block;width:100%;border:0;border-radius:6px;
+    padding:15px 20px;font-size:16px;font-weight:600;
+    font-family:inherit;cursor:pointer;
+    background:var(--blue);color:#fff;
+    transition:background .15s;
+  }
+  .btn:active{background:var(--blue-dark)}
+  .btn.secondary{
+    background:#fff;color:var(--blue);
+    border:1px solid var(--blue);
+  }
+  .btn.secondary:active{background:#eef4fb}
+  .btn+.btn{margin-top:10px}
+  .btn[hidden]{display:none}
+
+  .mailbox{
+    margin-top:18px;background:#fff;border:1px solid var(--line);
+    border-radius:6px;padding:20px;
+  }
+  .mailbox[hidden]{display:none}
+  .mailbox h2{
+    font-size:15px;font-weight:700;margin:0 0 12px;
+    padding-bottom:10px;border-bottom:2px solid var(--blue);
+    display:inline-block;
+  }
+  .addr{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    font-size:16px;font-weight:600;color:var(--blue);
+    word-break:break-all;margin:0 0 14px;
+  }
+  .tips{
+    font-size:13px;color:var(--ink-2);line-height:1.75;
+    margin:14px 0 18px;padding-left:18px;
+  }
+  .tips li{margin-bottom:4px}
+
+  .fallback-link{
+    display:block;text-align:center;margin-top:22px;
+    font-size:13px;color:var(--ink-2);
+    text-decoration:underline;text-underline-offset:3px;
+  }
+
+  .toast{
+    position:fixed;left:50%;bottom:36px;transform:translateX(-50%) translateY(12px);
+    background:rgba(26,26,26,.9);color:#fff;font-size:14px;
+    padding:10px 18px;border-radius:20px;
+    opacity:0;pointer-events:none;transition:all .22s;
+    white-space:nowrap;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  footer{
+    margin-top:34px;text-align:center;
+    font-size:12px;color:#9aa5af;line-height:1.9;
+  }
+
+  @media (max-width:380px){
+    .batch-bar{flex-direction:column;align-items:flex-start;gap:4px}
+    .batch-no{text-align:left}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-cn">QMA 违规处理系统</div>
+    <div class="brand-sub">代理商申诉入口</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="batch-bar">
+    <span class="batch-label">通报批次</span>
+    <span class="batch-no empty" id="batchNo">未指定</span>
+  </div>
+
+  <div class="card">
+    <div class="dot checking" id="dot">⋯</div>
+    <h1 id="stateTitle">正在检查申诉入口…</h1>
+    <p class="desc" id="stateDesc">请稍候，通常几秒内完成</p>
+
+    <button class="btn" id="btnOnline" hidden>进入在线申诉</button>
+    <button class="btn secondary" id="btnMail" hidden>查看邮件申诉方式</button>
+    <button class="btn secondary" id="btnRetry" hidden>重新检测</button>
+  </div>
+
+  <div class="mailbox" id="mailbox" hidden>
+    <h2>邮件申诉方式</h2>
+    <p class="addr">QMA@faw-vw.com</p>
+    <ul class="tips">
+      <li>直接回复收到的通报邮件，或在邮件客户端中新建邮件</li>
+      <li>正文写明：代理代码、需申诉的案件号、申诉理由</li>
+      <li>证据材料请作为附件一并发送</li>
+      <li>用邮件提交的申诉，处理时效与网页提交一致</li>
+    </ul>
+    <button class="btn" id="btnOpenMail">打开邮件客户端</button>
+    <button class="btn secondary" id="btnCopy">复制申诉邮件内容</button>
+  </div>
+
+  <a class="fallback-link" id="directLink" href="#" hidden>系统可用但检测异常？点此直接进入</a>
+
+  <footer>
+    本页面仅用于申诉入口，不收集任何信息<br>
+    如对处理流程有疑问，请与区域经理联系
+  </footer>
+</div>
+
+<div class="toast" id="toast">已复制</div>
+
+<script>
+(function () {
+  // QMA 真实服务地址（家里 NAS + 公网端口）
+  var QMA = 'https://87475535.xyz:8143';
+  var PROBE_TIMEOUT = 5000;
+
+  var params = new URLSearchParams(location.search);
+  var batch = (params.get('batch') || '').trim();
+
+  var el = {
+    batchNo: document.getElementById('batchNo'),
+    dot: document.getElementById('dot'),
+    title: document.getElementById('stateTitle'),
+    desc: document.getElementById('stateDesc'),
+    online: document.getElementById('btnOnline'),
+    mail: document.getElementById('btnMail'),
+    retry: document.getElementById('btnRetry'),
+    mailbox: document.getElementById('mailbox'),
+    openMail: document.getElementById('btnOpenMail'),
+    copy: document.getElementById('btnCopy'),
+    direct: document.getElementById('directLink'),
+    toast: document.getElementById('toast')
+  };
+
+  var appealUrl = QMA + '/appeal' + (batch ? '?batch=' + encodeURIComponent(batch) : '');
+
+  if (batch) {
+    el.batchNo.textContent = batch;
+    el.batchNo.classList.remove('empty');
+  }
+  el.direct.href = appealUrl;
+
+  function showToast(text) {
+    el.toast.textContent = text;
+    el.toast.classList.add('show');
+    setTimeout(function () { el.toast.classList.remove('show'); }, 1600);
+  }
+
+  function setState(state) {
+    el.online.hidden = true;
+    el.mail.hidden = true;
+    el.retry.hidden = true;
+
+    if (state === 'checking') {
+      el.dot.className = 'dot checking';
+      el.dot.textContent = '⋯';
+      el.title.textContent = '正在检查申诉入口…';
+      el.desc.textContent = '请稍候，通常几秒内完成';
+    } else if (state === 'online') {
+      el.dot.className = 'dot online';
+      el.dot.textContent = '✓';
+      el.title.textContent = '申诉入口正常';
+      el.desc.textContent = '点击下方按钮，进入在线申诉页面提交材料';
+      el.online.hidden = false;
+    } else {
+      el.dot.className = 'dot offline';
+      el.dot.textContent = '!';
+      el.title.textContent = '申诉入口临时不可用';
+      el.desc.textContent = '系统正在维护中，请通过邮件提交申诉，不会影响受理';
+      el.mail.hidden = false;
+      el.retry.hidden = false;
+      el.mailbox.hidden = false;
+    }
+  }
+
+  function probe() {
+    setState('checking');
+    el.mailbox.hidden = true;
+    el.direct.hidden = true;
+
+    var done = false;
+    var ctrl = ('AbortController' in window) ? new AbortController() : null;
+    var timer = setTimeout(function () {
+      if (done) return;
+      done = true;
+      if (ctrl) ctrl.abort();
+      finish(false);
+    }, PROBE_TIMEOUT);
+
+    fetch(appealUrl, {
+      mode: 'no-cors',
+      cache: 'no-store',
+      signal: ctrl ? ctrl.signal : undefined
+    }).then(function () {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      finish(true);
+    }).catch(function () {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      finish(false);
+    });
+  }
+
+  function finish(ok) {
+    setState(ok ? 'online' : 'offline');
+    // 探测为正常时不显示「直接进入」小链接（已有主按钮）
+    el.direct.hidden = ok;
+  }
+
+  function mailContent() {
+    var subject = '申诉申请' + (batch ? '（批次 ' + batch + '）' : '');
+    var body = [
+      '您好：',
+      '',
+      '我方对以下通报的违规处理结果存在异议，现提出申诉。',
+      '',
+      '批次号：' + (batch || ''),
+      '代理代码：',
+      '申诉案件号：',
+      '申诉理由：',
+      '',
+      '（请将相关证据材料作为附件一并发送）',
+      '',
+      '此致'
+    ].join('\n');
+    return { subject: subject, body: body };
+  }
+
+  el.online.addEventListener('click', function () {
+    location.href = appealUrl;
+  });
+
+  el.mail.addEventListener('click', function () {
+    el.mailbox.hidden = false;
+    el.mailbox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  });
+
+  el.retry.addEventListener('click', probe);
+
+  el.openMail.addEventListener('click', function () {
+    var m = mailContent();
+    location.href = 'mailto:QMA@faw-vw.com'
+      + '?subject=' + encodeURIComponent(m.subject)
+      + '&body=' + encodeURIComponent(m.body);
+  });
+
+  el.copy.addEventListener('click', function () {
+    var m = mailContent();
+    var text = '收件人：QMA@faw-vw.com\n主题：' + m.subject + '\n\n' + m.body;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        showToast('已复制，粘贴到邮件中即可');
+      }).catch(function () { fallbackCopy(text); });
+    } else {
+      fallbackCopy(text);
+    }
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      showToast('已复制，粘贴到邮件中即可');
+    } catch (e) {
+      showToast('复制失败，请手动选择文字复制');
+    }
+    document.body.removeChild(ta);
+  }
+
+  probe();
+})();
+</script>
+</body>
+</html>
